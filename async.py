@@ -12,25 +12,6 @@ async def get_people(session, people_id):
         json_data = await response.json()
         return json_data
 
-
-# async def get_url(item_key: str, item_: dict):
-#     url_list = item_.get(item_key)
-#     if url_list:
-#         return url_list
-#     else:
-#         return ''
-#
-#
-# async def get_item(session, url, item_key):
-#     async with session.get(url) as response:
-#         json_data = await response.json()
-#         text = await json_data[item_key]
-#         return text
-#
-#
-# async def m(session, item_, item_key_):
-#     cors = (get_item(session, url, item_key_) for url in await get_url(item_key_, item_))
-#     results = await asyncio.gather(*cors)
 async def item_get(item_, item_k,):
     return item_.get(item_k)
 
