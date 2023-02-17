@@ -15,19 +15,47 @@ async def get_people(session, people_id):
 async def item_get(item_, item_k,):
     return item_.get(item_k)
 
-async def f(item_, item_k, name_):
+# async def f(item_, item_k, name_):
+#
+#     a = item_.get(item_k)
+#     if a:
+#         print(f'--------------',a,'<<<<<<<<<<<<<<')
+#         n = []
+#         for i in a:
+#             async with aiohttp.ClientSession() as session:
+#                 async with session.get(i) as response:
+#                     json_data = await response.json()
+#                     print(f'json_data--->>> {json_data}')
+#                     n.append(json_data)
+#         print(f'888888888888{n}888888888')
+#         res_list = await asyncio.gather(*n)
+#         print(f'res_list{res_list}')
+#         words_list = []
+#         for res in res_list:
+#             words_list.append(res.get(name_))
+#         n = ','.join(words_list)
+#         return n
+async def get_f(url_):
+    session_ = aiohttp.ClientSession()
+    response_ = await session_.get(url_)
+    response_json_ = await response_.json()
+    await session_.close()
+    return response_json_
 
-    a = item_.get(item_k)
-    if a:
-        n = []
-        for i in a:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(i) as response:
-                    json_data = await response.json()
-                    n.append(json_data.get(name_))
-        n = ','.join(n)
-        return n
-
+async def f(item_, item_key_, name_):
+    if item_.get(item_key_):
+        crs = []
+        for i in item_.get(item_key_):
+            coruntine_ = get_f(i)
+            crs.append(coruntine_)
+        result_ = await asyncio.gather(*crs)
+        names_list = []
+        for res in result_:
+            names_list.append(res.get(name_, ''))
+        name_str = ','.join(names_list)
+        return name_str
+    else:
+        return ''
 
 async def paste_to_db(results):
     swapi_people = [SwapiPeople(birth_year=item.get('birth_year'),
@@ -61,7 +89,7 @@ async def main():
     coros = (get_people(session, i) for i in range(1, 84))
     for coros_chunk in chunked(coros, CHUNK_SIZE):
         results = await asyncio.gather(*coros_chunk)
-        pprint(results)
+        # pprint(results)
         asyncio.create_task(paste_to_db(results, ))
 
     await session.close()
