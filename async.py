@@ -3,7 +3,6 @@ import aiohttp
 import datetime
 from more_itertools import chunked
 from models import engine, Session, SwapiPeople, Base
-from pprint import pprint
 CHUNK_SIZE = 10
 
 
@@ -12,35 +11,18 @@ async def get_people(session, people_id):
         json_data = await response.json()
         return json_data
 
+
 async def item_get(item_, item_k,):
     return item_.get(item_k)
 
-# async def f(item_, item_k, name_):
-#
-#     a = item_.get(item_k)
-#     if a:
-#         print(f'--------------',a,'<<<<<<<<<<<<<<')
-#         n = []
-#         for i in a:
-#             async with aiohttp.ClientSession() as session:
-#                 async with session.get(i) as response:
-#                     json_data = await response.json()
-#                     print(f'json_data--->>> {json_data}')
-#                     n.append(json_data)
-#         print(f'888888888888{n}888888888')
-#         res_list = await asyncio.gather(*n)
-#         print(f'res_list{res_list}')
-#         words_list = []
-#         for res in res_list:
-#             words_list.append(res.get(name_))
-#         n = ','.join(words_list)
-#         return n
+
 async def get_f(url_):
     session_ = aiohttp.ClientSession()
     response_ = await session_.get(url_)
     response_json_ = await response_.json()
     await session_.close()
     return response_json_
+
 
 async def f(item_, item_key_, name_):
     if item_.get(item_key_):
@@ -56,6 +38,7 @@ async def f(item_, item_key_, name_):
         return name_str
     else:
         return ''
+
 
 async def paste_to_db(results):
     swapi_people = [SwapiPeople(birth_year=item.get('birth_year'),
