@@ -44,7 +44,7 @@ async def f(item_, item_key_, name_):
 
 async def paste_to_db(results):
     swapi_people = [SwapiPeople(
-                                id=item.get('people_id'),
+                                id_=item.get('people_id'),
                                 birth_year=item.get('birth_year'),
                                 eye_color=item.get('eye_color'),
                                 films=await f(item, 'films', 'title'),

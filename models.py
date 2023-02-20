@@ -11,6 +11,7 @@ Base = declarative_base()
 class SwapiPeople(Base):
     __tablename__ = 'swapi_people'
     id = Column(Integer, primary_key=True, autoincrement=True)
+    id_ = Column(Integer)
     birth_year = Column(String(length=10))
     eye_color = Column(String(length=40))
     films = Column(String(length=400))
