@@ -1,18 +1,20 @@
 import asyncio
-import aiohttp
 import datetime
+import aiohttp
 from more_itertools import chunked
 from models import engine, Session, SwapiPeople, Base
+
 CHUNK_SIZE = 10
 
 
 async def get_people(session, people_id):
     async with session.get(f'https://swapi.dev/api/people/{people_id}/') as response:
         json_data = await response.json()
+        json_data['people_id'] = people_id
         return json_data
 
 
-async def item_get(item_, item_k,):
+async def item_get(item_, item_k, ):
     return item_.get(item_k)
 
 
@@ -41,9 +43,10 @@ async def f(item_, item_key_, name_):
 
 
 async def paste_to_db(results):
-    swapi_people = [SwapiPeople(birth_year=item.get('birth_year'),
+    swapi_people = [SwapiPeople(
+                                id=item.get('people_id'),
+                                birth_year=item.get('birth_year'),
                                 eye_color=item.get('eye_color'),
-                                # films=','.join(item.get('films', '')),
                                 films=await f(item, 'films', 'title'),
                                 gender=item.get('gender'),
                                 hair_color=item.get('hair_color'),
@@ -54,7 +57,8 @@ async def paste_to_db(results):
                                 skin_color=item.get('skin_color'),
                                 species=await f(item, 'species', 'name'),
                                 starships=await f(item, 'starships', 'name'),
-                                vehicles=await f(item, 'vehicles', 'name'))
+                                vehicles=await f(item, 'vehicles', 'name')
+                                )
                     for item in results]
     async with Session() as session:
         session.add_all(swapi_people)
@@ -73,7 +77,7 @@ async def main():
     for coros_chunk in chunked(coros, CHUNK_SIZE):
         results = await asyncio.gather(*coros_chunk)
         # pprint(results)
-        asyncio.create_task(paste_to_db(results, ))
+        asyncio.create_task(paste_to_db(results,))
 
     await session.close()
     set_tasks = asyncio.all_tasks()
@@ -83,6 +87,7 @@ async def main():
 
     stop = datetime.datetime.now()
     print(stop - start)
+
 
 if __name__ == '__main__':
     asyncio.run(main())
